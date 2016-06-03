@@ -5,7 +5,7 @@
  *
  * @author admin
  */
-class MY_Controller extends MX_Controller {
+class MY_Controller extends CI_Controller {
 
     protected $_layout = null;
 
@@ -21,26 +21,25 @@ class MY_Controller extends MX_Controller {
      */
     protected function _isApi()
     {
-        return true;
+        return false;
     }
 
     /**
      * Simple Redirect Wrapper to Handle Api Request
      * 
      * @param string $url
-     * @param mix $type
      * @param array $array
+     * @param mix $type
      * @return array/null
      */
-    protected function redirect($url, $type = null, $array = [])
+    protected function redirect($url, $array = [], $type = null)
     {
         if ($this->_isApi())
         {
             return $array;
         }
 
-        redirect($url, $type);
-        return;
+        return redirect($url, $type);
     }
 
     /**
@@ -77,8 +76,8 @@ class MY_Controller extends MX_Controller {
         //if no layout return as it
         if (is_null($this->_layout))
         {
-            $this->output->append_output($_output);
-            return;
+//            $this->output->append_output($_output);
+            return $_output;
         }
 
         //else append to the master
@@ -86,7 +85,26 @@ class MY_Controller extends MX_Controller {
 
         $_layout_tpl = $this->_layout . '.tpl.php';
 
-        $this->load->view($_layout_tpl, $data);
+        return $this->load->view($_layout_tpl, $data, true);
+    }
+
+    /**
+     * Process before calling controller function
+     * 
+     * @param type $method
+     * @param type $params
+     */
+    public function _remap($method, $params = [])
+    {
+        $_output = call_user_func_array([$this, $method], $params);
+        if ($this->_isApi())
+        {
+            $this->output->set_header('Content-Type: application/json');
+            $_output = json_encode($_output);
+        }
+
+
+        $this->output->append_output($_output);
     }
 
 }
