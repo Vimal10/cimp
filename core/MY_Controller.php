@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Description of MY_Controller
+ * Extending Controller with MY_Controller
  *
- * @author admin
+ * @author Vimal Mistry
  */
 class MY_Controller extends CI_Controller {
 
