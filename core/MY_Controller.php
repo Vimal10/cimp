@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Extending Controller with MY_Controller
+ * Description of MY_Controller
  *
- * @author Vimal Mistry
+ * @author admin
  */
 class MY_Controller extends CI_Controller {
 
@@ -12,6 +12,8 @@ class MY_Controller extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->library('session');
+        $this->load->helper('url');
     }
 
     /**
@@ -22,6 +24,12 @@ class MY_Controller extends CI_Controller {
     protected function _isApi()
     {
         return false;
+    }
+
+    protected function beforeView(&$template, &$data = [])
+    {
+        $data['__run'] = 'su yar';
+        $data['sidebar'] = 'this is sidebar';
     }
 
     /**
@@ -71,6 +79,9 @@ class MY_Controller extends CI_Controller {
         $_tpl = $template . '.tpl.php';
 
         //render template
+
+        $this->beforeView($template, $data);
+
         $_output = $this->load->view($_tpl, $data, true);
 
         //if no layout return as it
@@ -85,6 +96,8 @@ class MY_Controller extends CI_Controller {
 
         $_layout_tpl = $this->_layout . '.tpl.php';
 
+        $this->beforeView($this->_layout, $data);
+
         return $this->load->view($_layout_tpl, $data, true);
     }
 
@@ -96,6 +109,7 @@ class MY_Controller extends CI_Controller {
      */
     public function _remap($method, $params = [])
     {
+//        $this->output->set_header('X-Powered-By: vimal');
         $_output = call_user_func_array([$this, $method], $params);
         if ($this->_isApi())
         {
