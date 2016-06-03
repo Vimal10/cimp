@@ -1,3 +1,5 @@
+<?php
+
 /*
  Example 1: 
  event::bind('blog.post.create', function($args = array())
